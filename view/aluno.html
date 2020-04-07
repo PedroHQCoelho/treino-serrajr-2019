@@ -1,0 +1,84 @@
+<html>
+<head>
+    <title>Controle de Alunos</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    </head>
+    <body>
+    <div class="container">
+        <div class="row">
+        <div class="col-sm-6">
+            <form id="frm-cad-aluno">
+                <div class="form-group">
+                <input type="hidden" name="action" value="NOVO_ALUNO">
+                <input type="text" class="form-control" name="nome" placeholder="Nome do aluno...">
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                <button type="button" class="btn btn-primary" id="btn-cad-aluno">Cadastrar</button>
+                </div>
+                </div>
+            </form>
+            </div>
+            <div class="col-sm-6">
+                <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td>Matricula</td>
+                        <td>Nome</td>
+                        <td>Acao</td>
+                    </tr>
+                    <tbody id="lista-alunos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+        <script src="../js/jquery-3.4.1.min.js"></script>
+        <script src="../js/bootstrap.js"></script>
+        <script>
+            $(document).ready(function(){
+            
+            $(document).on('click','#btn-cad-aluno', function(){
+                cadastraAluno();
+                 });
+                
+        }); 
+            
+            function cadastraAluno()
+            {
+                //Obtem todos os dados de input do formulário
+                let dados = $('#frm-cad-aluno').serializeArray();
+                
+                //Enviar para o controller executar a ação
+                $.post('../controller/Aluno.php', dados, function(retorno){
+                    
+                    listaAluno();
+                    
+                }, 'json');
+            }
+            
+            function listaAluno()
+            {
+                $.post('../controller/Aluno.php', {action:'LISTA_ALUNOS'},function(alunos){
+                    
+                    var lista = '';
+                    
+                    $.each(alunos, function(indice,aluno){
+                        
+                        lista += '<tr>';
+                        lista += '<td>'+aluno.matricula+'</td>';
+                        lista += '<td>'+aluno.nome+'</td>';
+                        lista += '<td></td>';
+                    lista += '</tr>';
+                        
+                    });
+                    
+                    $('#lista-alunos').empty();
+                    $('#lista-alunos').append(lista);
+                    
+                },'json');
+            }
+            
+        </script>
+    </body>
+</html>
